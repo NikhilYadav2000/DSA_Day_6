@@ -25,7 +25,7 @@ int main(){
     return 0;
 }
 */
-
+/*
 #include <bits/stdc++.h>
 using namespace std;
 class Node
@@ -172,7 +172,7 @@ Node* insertTail(Node* head,int val){
     Node* temp=head;
     while(temp->next!=nullptr){
         temp=temp->next;
-    } 
+    }
     Node* newNode= new Node(val,nullptr);
     temp->next=newNode;
     return head;
@@ -281,7 +281,7 @@ int main()
 
     cout << "Inserting at Head : ";
     head = insertHead(head, 4);
-    // Or 
+    // Or
     // head= insetHead(head,100);
     cout << "Traversing in the LL : ";
     Node *temp5 = head;
@@ -298,7 +298,7 @@ int main()
     Node *temp6 = head;
     while (temp6 != nullptr){
         cout << temp6->data << " ";
-        temp6 = 
+        temp6 =
         temp6->next;
     }cout<<endl;
 
@@ -323,7 +323,7 @@ int main()
 
     return 0;
 }
-
+*/
 /*
 head->data : 1
 Traversing in the LL : 1 2 3 4 5
@@ -338,3 +338,169 @@ Inserting at Tail :Traversing in the LL : 4 2 100
 Inserting Any : Traversing in the LL : 4 2 1310 100
 Insert Before Val : Traversing in the LL : 4 2 1310 100
 */
+
+// DoublyLinkedList
+#include <bits/stdc++.h>
+using namespace std;
+class Node
+{
+public:
+    int data;
+    Node *next;
+    Node *prev;
+    Node(int data, Node *next, Node *prev)
+    {
+        this->data = data;
+        this->next = next;
+        this->prev = prev;
+    }
+    Node(int data)
+    {
+        this->data = data;
+        this->next = nullptr;
+        this->prev = nullptr;
+    }
+};
+Node *MakingDLL(vector<int> &arr)
+{
+    Node *head = new Node(arr[0]);
+    Node *prev = head;
+    for (int i = 1; i < arr.size(); i++) // start i from ` not 0
+    {
+        Node *temp = new Node(arr[i]);
+        prev->next = temp;
+        temp->prev = prev;
+        prev = temp;
+    }
+    return head;
+}
+void printDLL(Node *head)
+{
+    Node *temp = head;
+    while (temp)
+    {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+}
+Node *DeleteAtHead(Node *head)
+{
+    if (head == NULL || head->next == nullptr)
+        return NULL;
+    Node *temp = head;
+    head = head->next;
+    head->prev = nullptr;
+    delete temp;
+    return head;
+}
+Node *DeleteTail(Node *head)
+{
+    if (head == NULL || head->next == nullptr)
+        return NULL;
+    Node *temp = head;
+    while (temp->next != nullptr)
+    {
+        temp = temp->next;
+    }
+    temp->prev->next = nullptr;
+    temp->prev = nullptr;
+    delete temp;
+    return head;
+}
+Node *DelelteKth(Node* head, int k){
+    if(head==NULL) return NULL;
+    // if(head->next==nullptr){
+    //     if(k==1) return NULL;
+    // }
+    Node* temp=head;
+    int cnt=0;
+    // while(cnt!=(k-1)){ // why we are not doing this is bcoz if k's value is longer then temp's length 
+    //     temp=temp->next;
+    //     cnt++;
+    // }
+    while(temp!=nullptr){
+        cnt++;
+        if(cnt==k) break;
+        temp=temp->next;
+    }
+    if(temp->next==nullptr) return DeleteTail(temp);
+    if(temp->prev==nullptr) return DeleteAtHead(temp);
+    if(temp->next==nullptr && temp->prev==nullptr){
+        delete temp;
+        return NULL;
+    }
+    temp->next->prev=temp->prev;
+    temp->prev->next=temp->next;
+    temp->next=nullptr;
+    temp->prev=nullptr;
+    return head;
+}
+Node* insertEle(Node* head, int pos, int val){
+    Node* temp=head;
+    Node* newNode = new Node(val);
+    if(pos==1){
+        newNode->next=head;
+        // newNode->prev=nullptr; already it was pointing to nullptr during making of it in CTOR
+        head=newNode;
+        return head;
+    } 
+    int cnt=0;
+    while(temp!=nullptr){
+        cnt++;
+        if(cnt==(pos-1)) break;
+        temp=temp->next;
+    }
+    if(temp->next==nullptr){
+        temp->next=newNode;
+        newNode->prev=temp;
+        return head;
+    }
+    newNode->prev=temp;
+    newNode->next=temp->next;
+    temp->next->prev=newNode;
+    temp->next=newNode;
+    return head;
+
+}
+int main()
+{
+    vector<int> arr = {1, 2, 3, 4, 5, 6};
+    Node *head = MakingDLL(arr);
+    cout << "Printing Head data -> ";
+    cout << head->data;
+    cout << endl;
+
+    cout << "Printing DLL -> ";
+    printDLL(head);
+    cout << endl;
+
+    cout << "Delete at Head ->";
+    head = DeleteAtHead(head);
+    printDLL(head);
+    cout << endl;
+
+    cout << "Delete at Tail ->";
+    head = DeleteTail(head);
+    printDLL(head);
+    cout << endl;
+
+    cout<<"Delete kth Element ->";
+    head=DelelteKth(head,3);
+    printDLL(head);
+    cout << endl;
+
+    cout<<"Insert Element in between ->";
+    head=insertEle(head,3,13);
+    printDLL(head);
+    cout<<endl;
+    cout<<"Insert Element at tail ->";
+    head=insertEle(head,5,10);
+    printDLL(head);
+    cout<<endl;
+    cout<<"Insert Element at head ->";
+    head=insertEle(head,1,1310);
+    printDLL(head);
+    cout<<endl;
+
+    return 0;
+}
